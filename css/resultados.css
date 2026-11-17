@@ -1,0 +1,45 @@
+/* =====================================================================
+   RESULTADOS: tarjetas de PCI, PCC, PDP y CCE
+   ===================================================================== */
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.tarjeta h3 {
+  margin: 0;
+  color: var(--color-primario);
+}
+
+.tarjeta .valor {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 8px 0 4px;
+}
+
+.tarjeta .desc {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+/* La tarjeta del CCE resalta con fondo de color */
+.tarjeta.destacada {
+  background: var(--color-primario);
+  color: #fff;
+}
+
+.tarjeta.destacada h3,
+.tarjeta.destacada .desc {
+  color: #d6eef4;
+}

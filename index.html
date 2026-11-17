@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finsera Capital</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/formulario.css">
+  <link rel="stylesheet" href="css/resultados.css">
+  <link rel="stylesheet" href="css/simulador.css">
+  <link rel="stylesheet" href="css/diagnostico.css">
+  <link rel="stylesheet" href="css/ventana.css">
+  <link rel="stylesheet" href="css/animaciones.css">
+</head>
+<body>
+  <header class="encabezado">
+    <p class="etiqueta">Finanzas en las Organizaciones</p>
+    <h1>Ciclo de Conversión de Efectivo</h1>
+    <p class="formula">CCE = PCI + PCC − PDP</p>
+  </header>
+
+  <main>
+    <!-- Formulario de captura. Empieza en blanco: todos los campos son obligatorios.
+         placeholder="..." es solo un texto de guía gris, NO un valor. -->
+    <form id="form-captura">
+
+      <!-- ===== Empresa ===== -->
+      <fieldset>
+        <legend>Empresa</legend>
+        <label for="empresa">Nombre</label>
+        <select id="empresa" name="empresa" required>
+          <!-- Opción vacía: obliga a elegir una empresa (value="" + required) -->
+          <option value="" disabled selected>Selecciona una empresa…</option>
+          <option value="A">A · Ferretera del Norte</option>
+          <option value="B">B · Abarrotes Central</option>
+          <option value="C">C · Plásticos del Bajío</option>
+          <option value="D">D · Tecno Hogar</option>
+        </select>
+      </fieldset>
+
+      <!-- ===== Estado de resultados ===== -->
+      <fieldset>
+        <legend>Estado de resultados</legend>
+
+        <label for="ventas">Ventas totales ($)</label>
+        <input type="number" id="ventas" name="ventas" min="0" step="any" placeholder="Ej. 12000000" required>
+
+        <label for="pctCredito">Ventas a crédito (%)</label>
+        <input type="number" id="pctCredito" name="pctCredito" min="0" max="100" step="any" placeholder="Ej. 100" required>
+
+        <label for="costoVentas">Costo de ventas ($)</label>
+        <input type="number" id="costoVentas" name="costoVentas" min="0" step="any" placeholder="Ej. 8400000" required>
+      </fieldset>
+
+      <!-- ===== Balance general ===== -->
+      <fieldset>
+        <legend>Balance general</legend>
+
+        <label for="invInicial">Inventario inicial ($)</label>
+        <input type="number" id="invInicial" name="invInicial" min="0" step="any" placeholder="Ej. 1800000" required>
+
+        <label for="invFinal">Inventario final ($)</label>
+        <input type="number" id="invFinal" name="invFinal" min="0" step="any" placeholder="Ej. 2200000" required>
+
+        <label for="cxc">Cuentas por cobrar ($)</label>
+        <input type="number" id="cxc" name="cxc" min="0" step="any" placeholder="Ej. 1500000" required>
+
+        <label for="cxp">Cuentas por pagar ($)</label>
+        <input type="number" id="cxp" name="cxp" min="0" step="any" placeholder="Ej. 900000" required>
+      </fieldset>
+
+      <!-- ===== Supuestos ===== -->
+      <fieldset>
+        <legend>Supuestos</legend>
+
+        <label for="dias">Días del año</label>
+        <input type="number" id="dias" name="dias" min="1" placeholder="Ej. 365" required>
+
+        <label for="tasa">Tasa de interés anual (%)</label>
+        <input type="number" id="tasa" name="tasa" min="0" step="any" placeholder="Ej. 12" required>
+      </fieldset>
+
+      <!-- ===== Referencia del sector: ENTRADAS obligatorias (datos del caso) ===== -->
+      <fieldset>
+        <legend>Referencia del sector (días)</legend>
+        <p class="nota" id="sector-giro"></p>
+
+        <label for="sectorPci">PCI del sector</label>
+        <input type="number" id="sectorPci" name="sectorPci" min="0" step="any" placeholder="Ej. 60" required>
+
+        <label for="sectorPcc">PCC del sector</label>
+        <input type="number" id="sectorPcc" name="sectorPcc" min="0" step="any" placeholder="Ej. 30" required>
+
+        <label for="sectorPdp">PDP del sector</label>
+        <input type="number" id="sectorPdp" name="sectorPdp" min="0" step="any" placeholder="Ej. 45" required>
+
+        <p class="nota">Capturen los promedios del sector que vienen en el caso de su empresa.</p>
+      </fieldset>
+
+      <!-- Botones. type="button" NO envía el formulario; type="submit" sí. -->
+      <div class="acciones">
+        <button type="button" id="cargar-ejemplo" class="secundario">Cargar ejemplo</button>
+        <button type="submit">Calcular</button>
+      </div>
+    </form>
+
+    <!-- ===== Ventana modal de resultados =====
+         <dialog> es una ventana nativa del navegador: se abre con showModal()
+         desde JS, oscurece el fondo y se cierra con Esc. -->
+    <dialog id="ventana-resultados" class="ventana" aria-labelledby="ventana-titulo">
+      <div class="ventana-contenido">
+
+      <div class="ventana-barra">
+        <h2 id="ventana-titulo">Resultados</h2>
+        <button type="button" id="ventana-cerrar" class="cerrar" aria-label="Cerrar">×</button>
+      </div>
+
+    <!-- ===== Resultados ===== -->
+    <section id="resultados">
+      <h2>Resultados</h2>
+
+      <!-- Tarjetas con los 4 indicadores -->
+      <div class="tarjetas">
+        <article class="tarjeta">
+          <h3>PCI</h3>
+          <p class="valor" id="res-pci">—</p>
+          <p class="desc">Días en inventario</p>
+          <p class="semaforo" id="sem-pci"></p>
+        </article>
+        <article class="tarjeta">
+          <h3>PCC</h3>
+          <p class="valor" id="res-pcc">—</p>
+          <p class="desc">Días de cobro</p>
+          <p class="semaforo" id="sem-pcc"></p>
+        </article>
+        <article class="tarjeta">
+          <h3>PDP</h3>
+          <p class="valor" id="res-pdp">—</p>
+          <p class="desc">Días de pago</p>
+          <p class="semaforo" id="sem-pdp"></p>
+        </article>
+        <article class="tarjeta destacada">
+          <h3>CCE</h3>
+          <p class="valor" id="res-cce">—</p>
+          <p class="desc">PCI + PCC − PDP</p>
+          <p class="semaforo" id="sem-cce"></p>
+        </article>
+      </div>
+
+      <!-- Desarrollo paso a paso: sirve para verificar a mano y para la defensa -->
+      <h3>Desarrollo del cálculo</h3>
+      <table class="desarrollo">
+        <thead>
+          <tr><th>Concepto</th><th>Fórmula con datos</th><th>Resultado</th></tr>
+        </thead>
+        <tbody id="tabla-desarrollo"></tbody>
+      </table>
+    </section>
+
+    <!-- ===== Diagnóstico frente al sector ===== -->
+    <section id="diagnostico">
+      <h2>Diagnóstico frente al sector</h2>
+      <p class="nota" id="diag-giro"></p>
+
+      <div class="interpretacion" id="diag-interpretacion"></div>
+
+      <h3>Alertas de riesgo</h3>
+      <ul class="alertas" id="diag-alertas"></ul>
+
+      <h3>Empresa vs sector</h3>
+      <div class="grafica">
+        <canvas id="grafica-sector" role="img" aria-label="Gráfica de barras: días de PCI, PCC, PDP y CCE de la empresa comparados con el sector"></canvas>
+      </div>
+    </section>
+
+    <!-- ===== Simulador ===== -->
+    <section id="simulador">
+      <h2>Simulador: ¿y si…?</h2>
+      <p>Mueve los controles para ver cómo cambia el CCE.</p>
+
+      <div class="controles">
+        <div class="control">
+          <label for="sim-pci">Reducir días de inventario: <strong id="sim-pci-valor">0</strong> días</label>
+          <input type="range" id="sim-pci" min="0" max="0" step="1" value="0">
+        </div>
+
+        <div class="control">
+          <label for="sim-pcc">Reducir días de cobro: <strong id="sim-pcc-valor">0</strong> días</label>
+          <input type="range" id="sim-pcc" min="0" max="0" step="1" value="0">
+        </div>
+
+        <div class="control">
+          <label for="sim-pdp">Aumentar días de pago: <strong id="sim-pdp-valor">0</strong> días</label>
+          <input type="range" id="sim-pdp" min="0" max="60" step="1" value="0">
+        </div>
+      </div>
+
+      <table class="desarrollo comparativo">
+        <thead>
+          <tr><th>Componente</th><th>Actual</th><th>Simulado</th><th>Cambio</th></tr>
+        </thead>
+        <tbody id="tabla-simulacion"></tbody>
+      </table>
+
+      <!-- Impacto en dinero de la simulación -->
+      <h3>Impacto financiero</h3>
+      <div class="tarjetas">
+        <article class="tarjeta">
+          <h3>Efectivo liberado</h3>
+          <p class="valor" id="sim-efectivo">—</p>
+          <p class="desc">Dinero que deja de estar atrapado en la operación</p>
+        </article>
+        <article class="tarjeta destacada">
+          <h3>Ahorro financiero anual</h3>
+          <p class="valor" id="sim-ahorro">—</p>
+          <p class="desc" id="sim-ahorro-desc">Efectivo liberado × tasa</p>
+        </article>
+      </div>
+
+      <table class="desarrollo detalle-efectivo">
+        <thead>
+          <tr><th>Fuente</th><th>Días ganados</th><th>Base diaria</th><th>Efectivo liberado</th></tr>
+        </thead>
+        <tbody id="tabla-efectivo"></tbody>
+      </table>
+
+      <h3>Riesgos del escenario</h3>
+      <ul class="alertas" id="sim-alertas"></ul>
+
+      <button type="button" id="sim-reiniciar" class="secundario">Reiniciar simulación</button>
+    </section>
+
+    <!-- ===== Análisis de sensibilidad ===== -->
+    <section id="sensibilidad">
+      <h2>Análisis de sensibilidad</h2>
+      <p>¿Cuánto efectivo libera cada componente si mejora 5, 10, 15, 20 o 30 días?</p>
+
+      <div class="grafica">
+        <canvas id="grafica-sensibilidad" role="img" aria-label="Gráfica de líneas: efectivo liberado por inventario, cobranza y proveedores según los días de mejora"></canvas>
+      </div>
+
+      <table class="desarrollo tabla-sensibilidad">
+        <thead>
+          <tr><th>Mejora</th><th>Inventario</th><th>Cobranza</th><th>Proveedores</th></tr>
+        </thead>
+        <tbody id="tabla-sensibilidad"></tbody>
+      </table>
+      <p class="nota" id="sens-nota"></p>
+    </section>
+
+      </div> <!-- /ventana-contenido -->
+    </dialog>
+  </main>
+
+  <!-- Chart.js (librería de gráficas) desde un CDN. Va ANTES de main.js
+       porque nuestros módulos usan la variable global "Chart". -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- type="module" permite usar import/export entre archivos JS -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

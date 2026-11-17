@@ -1,0 +1,107 @@
+/* =====================================================================
+   DIAGNÓSTICO: semáforos, interpretación, alertas y gráficas
+   Colores de estado reservados (nunca se usan para series de gráficas)
+   y siempre acompañados de ícono + texto.
+   ===================================================================== */
+
+:root {
+  --estado-bien: #0ca30c;
+  --estado-atencion: #fab219;
+  --estado-critico: #d03b3b;
+  --estado-info: #2a78d6;
+}
+
+/* Notas pequeñas (supuestos, aclaraciones) */
+.nota {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+/* ===== Semáforos en las tarjetas ===== */
+.semaforo {
+  display: inline-block;
+  margin: 10px 0 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Fondo claro + texto oscuro = buen contraste aunque el color de estado sea claro */
+.semaforo.verde    { background: #e3f5e3; color: #0b5d0b; border-color: var(--estado-bien); }
+.semaforo.amarillo { background: #fff4d6; color: #6b4700; border-color: var(--estado-atencion); }
+.semaforo.rojo     { background: #fbe4e4; color: #8f1d1d; border-color: var(--estado-critico); }
+.semaforo.nd       { background: #eef1f2; color: var(--color-texto-suave); }
+
+/* ===== Interpretación ===== */
+.interpretacion {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-primario);
+  border-radius: var(--radio);
+  padding: 4px 16px;
+  line-height: 1.5;
+}
+
+/* El primer párrafo (panorama general) en negritas */
+.interpretacion p:first-child {
+  font-weight: 600;
+}
+
+/* ===== Alertas ===== */
+.alertas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.alerta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 10px 14px;
+}
+
+.alerta strong {
+  font-size: 0.92rem;
+}
+
+.alerta p {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: var(--color-texto-suave);
+}
+
+.alerta.critico     { border-left-color: var(--estado-critico); }
+.alerta.critico strong { color: #8f1d1d; }
+.alerta.advertencia { border-left-color: var(--estado-atencion); }
+.alerta.advertencia strong { color: #6b4700; }
+.alerta.info        { border-left-color: var(--estado-info); }
+.alerta.ok          { border-left-color: var(--estado-bien); color: #0b5d0b; font-weight: 600; }
+
+/* ===== Gráficas ===== */
+/* Chart.js necesita un contenedor con alto definido y position: relative */
+.grafica {
+  position: relative;
+  height: 300px;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+/* ===== Tabla de sensibilidad =====
+   Todas las columnas de montos iguales (sin la negrita de "resultado"
+   que .desarrollo pone en la última columna) */
+.tabla-sensibilidad td:not(:first-child) {
+  text-align: right;
+  white-space: nowrap;
+  font-weight: normal;
+}

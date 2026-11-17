@@ -1,0 +1,76 @@
+/* =====================================================================
+   ANIMACIONES Y TRANSICIONES
+   - transition: anima el CAMBIO de una propiedad (ej. al pasar el mouse)
+   - @keyframes + animation: una secuencia que se reproduce sola
+   ===================================================================== */
+
+/* ===== Entrada de secciones ===== */
+
+/* Definimos la animación: de invisible y 16px abajo, a visible en su lugar */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* "backwards": aplica el estado inicial durante el retraso, pero NO congela
+   el final (si lo congelara, bloquearía el efecto :hover de las tarjetas) */
+
+/* JS agrega la clase "aparecer" a una sección para reproducir la animación */
+.aparecer {
+  animation: aparecer 0.5s ease-out backwards;
+}
+
+/* Tarjetas escalonadas: cada una entra un poco después que la anterior */
+.aparecer .tarjeta {
+  animation: aparecer 0.5s ease-out backwards;
+}
+.aparecer .tarjeta:nth-child(2) { animation-delay: 0.08s; }
+.aparecer .tarjeta:nth-child(3) { animation-delay: 0.16s; }
+.aparecer .tarjeta:nth-child(4) { animation-delay: 0.24s; }
+
+/* El encabezado entra al cargar la página */
+header {
+  animation: aparecer 0.6s ease-out backwards;
+}
+
+/* ===== Microinteracciones (transiciones) ===== */
+
+/* Tarjetas: se elevan al pasar el mouse */
+.tarjeta {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(18, 37, 45, 0.12);
+}
+
+/* Botones: cambio de color suave y efecto de "hundirse" al hacer clic */
+button {
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+button:hover {
+  box-shadow: 0 4px 12px rgba(15, 110, 133, 0.25);
+}
+button:active {
+  transform: scale(0.98);
+}
+
+/* Campos del formulario y bloques */
+input, select, fieldset, .control {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+fieldset:hover,
+.control:hover {
+  border-color: var(--color-primario);
+}
+
+/* ===== Accesibilidad =====
+   Si el usuario pidió "reducir movimiento" en su sistema operativo,
+   apagamos animaciones y transiciones. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}

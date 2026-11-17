@@ -1,0 +1,62 @@
+/* =====================================================================
+   FORMULARIO DE CAPTURA
+   ===================================================================== */
+
+#form-captura {
+  display: grid;                                               /* acomoda los bloques en cuadrícula */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* 1 o 2 columnas según el ancho */
+  gap: 16px;
+}
+
+/* Fila de botones: ocupa todo el ancho de la cuadrícula */
+#form-captura .acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+}
+
+/* "Calcular" se estira; "Cargar ejemplo" toma solo lo que necesita */
+#form-captura .acciones button[type="submit"] {
+  flex: 1;
+}
+
+#form-captura .acciones button.secundario {
+  margin-top: 0;      /* quitar el margen que trae .secundario */
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+
+fieldset {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;                                      /* label arriba, input abajo */
+  gap: 4px;
+}
+
+legend {
+  font-weight: bold;
+  color: var(--color-primario);
+  padding: 0 6px;
+}
+
+label {
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+input, select {
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+}
+
+/* Anillo de enfoque suave (la transición está en animaciones.css) */
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(15, 110, 133, 0.2);
+}
