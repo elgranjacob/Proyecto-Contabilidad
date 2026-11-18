@@ -42,27 +42,41 @@ export function calcularCCE(pci, pcc, pdp) {
   return pci + pcc - pdp;
 }
 
-// Función "orquestadora": recibe todos los datos y devuelve todos los resultados
+// Función "orquestadora": recibe todos los datos y devuelve todos los resultados.
+// Aplica los supuestos que el caso pide declarar:
+//   datos.basePCC = "credito" | "totales"   → ventas usadas en el PCC
+//   datos.basePCI = "promedio" | "final"    → inventario usado en el PCI
+//   datos.compras                           → dato del caso (no se recalcula)
 export function calcularTodo(datos) {
   const ventasCredito = datos.ventas * (datos.pctCredito / 100);
-  const compras = calcularCompras(datos.costoVentas, datos.invInicial, datos.invFinal);
+  const ventasPCC = datos.basePCC === "totales" ? datos.ventas : ventasCredito;
 
-  const pci = calcularPCI(datos.invFinal, datos.costoVentas, datos.dias);
-  const pcc = calcularPCC(datos.cxc, ventasCredito, datos.dias);
+  const invPromedio = (datos.invInicial + datos.invFinal) / 2;
+  const inventarioPCI = datos.basePCI === "final" ? datos.invFinal : invPromedio;
+
+  // Compras: se usa la cifra del caso. La calculada solo sirve para comparar.
+  const compras = datos.compras;
+  const comprasCalculadas = calcularCompras(datos.costoVentas, datos.invInicial, datos.invFinal);
+
+  const pci = calcularPCI(inventarioPCI, datos.costoVentas, datos.dias);
+  const pcc = calcularPCC(datos.cxc, ventasPCC, datos.dias);
   const pdp = calcularPDP(datos.cxp, compras, datos.dias);
   const cce = calcularCCE(pci, pcc, pdp);
 
-  return { ventasCredito, compras, pci, pcc, pdp, cce };
+  return {
+    ventasCredito, ventasPCC, invPromedio, inventarioPCI,
+    compras, comprasCalculadas, pci, pcc, pdp, cce,
+  };
 }
 
 // BASES DIARIAS: cuánto dinero "atrapa" cada día de cada componente
 //   Inventario  → Costo de ventas / días
-//   Cobranza    → Ventas a crédito / días
+//   Cobranza    → Ventas usadas en el PCC / días
 //   Proveedores → Compras / días
 export function basesDiarias(datos, r) {
   return {
     pci: datos.costoVentas / datos.dias,
-    pcc: r.ventasCredito / datos.dias,
+    pcc: r.ventasPCC / datos.dias,
     pdp: r.compras / datos.dias,
   };
 }

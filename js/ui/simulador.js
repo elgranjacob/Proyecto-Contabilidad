@@ -65,7 +65,7 @@ function actualizarSimulacion() {
   // Riesgos del escenario simulado (ej. alargar demasiado el pago a proveedores)
   pintarAlertas(
     document.getElementById("sim-alertas"),
-    generarAlertas(sim, datosActuales.sector),
+    generarAlertas(sim, datosActuales, resultadoActual),
     "Sin riesgos detectados en este escenario."
   );
 }
@@ -99,6 +99,15 @@ function reiniciarSimulacion() {
   sliderPCC.value = 0;
   sliderPDP.value = 0;
   actualizarSimulacion();
+}
+
+// Coloca los sliders en unos ajustes dados (lo usan los botones de estrategias)
+export function aplicarAjustes(ajustes) {
+  sliderPCI.value = ajustes.menosPCI;
+  sliderPCC.value = ajustes.menosPCC;
+  sliderPDP.value = ajustes.masPDP;
+  actualizarSimulacion();
+  document.getElementById("simulador").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // Se llama UNA vez al cargar la página: registra los eventos

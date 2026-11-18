@@ -1,6 +1,9 @@
 // =====================================================================
 //  FORMATO: convierte números en texto para mostrar en pantalla
+//  Las cifras del caso están en MILLONES de pesos.
 // =====================================================================
+
+import { UNIDAD } from "./config.js";
 
 // Días con 2 decimales. Si el valor es null (no calculable) muestra "N/D".
 export function formatoDias(valor) {
@@ -8,9 +11,12 @@ export function formatoDias(valor) {
   return valor.toFixed(2) + " días";
 }
 
-// Pesos mexicanos con separador de miles: 1500000 -> "$1,500,000.00"
+// Millones de pesos: 34.5205 -> "$34.52 M"
 export function formatoPesos(valor) {
-  return valor.toLocaleString("es-MX", { style: "currency", currency: "MXN" });
+  const texto = Math.abs(valor).toLocaleString("es-MX", {
+    minimumFractionDigits: 2, maximumFractionDigits: 2,
+  });
+  return `${valor < 0 ? "−" : ""}$${texto} ${UNIDAD}`;
 }
 
 // Cambio con signo: +5.00 / −3.00

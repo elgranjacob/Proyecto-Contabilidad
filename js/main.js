@@ -7,6 +7,7 @@
 //                        ├─► abrirVentana()
 //                        ├─► mostrarResultados()   (tarjetas + semáforos)
 //                        ├─► mostrarDiagnostico()  (interpretación, alertas, gráfica)
+//                        ├─► mostrarEstrategias()  (3 estrategias cuantificadas)
 //                        ├─► iniciarSimulador()
 //                        └─► mostrarSensibilidad() (tabla + gráfica)
 // =====================================================================
@@ -18,6 +19,7 @@ import { mostrarResultados } from "./ui/resultados.js";
 import { mostrarDiagnostico } from "./ui/diagnostico.js";
 import { configurarSimulador, iniciarSimulador } from "./ui/simulador.js";
 import { mostrarSensibilidad } from "./ui/sensibilidad.js";
+import { mostrarEstrategias } from "./ui/estrategias.js";
 import { configurarVentana, abrirVentana } from "./ui/ventana.js";
 
 configurarFormulario();
@@ -36,6 +38,7 @@ document.getElementById("form-captura").addEventListener("submit", (evento) => {
 
   mostrarResultados(datos, resultados, comparacion);
   mostrarDiagnostico(datos, resultados, comparacion);
+  mostrarEstrategias(datos, resultados);
   iniciarSimulador(datos, resultados);
   mostrarSensibilidad(datos, resultados);
 });

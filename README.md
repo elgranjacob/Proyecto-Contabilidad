@@ -1,8 +1,9 @@
 # Calculadora del Ciclo de Conversión de Efectivo (CCE)
 
-Proyecto de Finanzas en las Organizaciones. Calcula el CCE de una empresa,
-lo compara con su sector, simula estrategias para reducirlo y estima el
-efectivo liberado y el ahorro financiero.
+Proyecto de Finanzas en las Organizaciones · **Caso A: Ferretera del Norte**
+(cifras en millones de pesos). Calcula PCI, PCC, PDP y CCE, los compara con el
+CCE promedio del sector (95 días), propone tres estrategias cuantificadas y
+simula otras, con el efectivo liberado y el ahorro financiero a la tasa del 14%.
 
 **CCE = PCI + PCC − PDP**
 
@@ -23,11 +24,12 @@ Después abre http://localhost:8000 en el navegador.
 
 | Función | Dónde se ve |
 |---|---|
-| Captura de balance, estado de resultados, supuestos y sector | Formulario |
+| Captura de los datos del caso y de los supuestos a declarar (365/360, ventas en PCC, inventario en PCI, tasa) | Formulario |
 | PCI, PCC, PDP y CCE con desarrollo paso a paso | Ventana → Resultados |
-| Semáforos contra el sector | Ventana → tarjetas |
+| Semáforo del CCE contra el sector; valor de un día por componente | Ventana → tarjetas |
 | Interpretación automática y alertas de riesgo / de datos | Ventana → Diagnóstico |
 | Gráfica empresa vs sector | Ventana → Diagnóstico |
+| 3 estrategias cuantificadas (días, $ liberados, ahorro, riesgos) | Ventana → Estrategias |
 | Simulador, efectivo liberado, ahorro y riesgos del escenario | Ventana → Simulador |
 | Análisis de sensibilidad (tabla + gráfica) | Ventana → Sensibilidad |
 
@@ -46,16 +48,17 @@ Después abre http://localhost:8000 en el navegador.
 ├── js/
 │   ├── main.js              Punto de entrada: conecta las piezas
 │   ├── logica/              Funciones puras (no tocan la página)
-│   │   ├── config.js        Supuestos: días, umbrales, factores de alerta
-│   │   ├── sector.js        Giro de cada empresa (los promedios del sector son entradas)
-│   │   ├── ejemplo.js       Caso de ejemplo para demo y verificación a mano
+│   │   ├── config.js        Reglas: unidad, umbrales, límites de alerta
+│   │   ├── ejemplo.js       Datos del Caso A y verificación a mano
+│   │   ├── estrategias.js   Las 3 estrategias propuestas y su evaluación
 │   │   ├── calculos.js      PCI, PCC, PDP, CCE, simulación, sensibilidad
 │   │   ├── diagnostico.js   Semáforos, interpretación y alertas
 │   │   └── formato.js       Números → texto ($, días)
 │   └── ui/                  Todo lo que lee o pinta la página
-│       ├── formulario.js    Lee los datos y llena el sector
+│       ├── formulario.js    Lee los datos y carga el caso
 │       ├── resultados.js    Tarjetas, semáforos y tabla de desarrollo
 │       ├── diagnostico.js   Interpretación, alertas y gráfica vs sector
+│       ├── estrategias.js   Tabla y tarjetas de estrategias
 │       ├── simulador.js     Sliders "¿y si…?" y riesgos del escenario
 │       ├── sensibilidad.js  Tabla y gráfica de sensibilidad
 │       ├── graficas.js      Envoltorio de Chart.js
@@ -75,6 +78,7 @@ Formulario ──► leerDatos() ──► calcularTodo() ──► compararConS
                                     ├─► abrirVentana()
                                     ├─► mostrarResultados()
                                     ├─► mostrarDiagnostico()
+                                    ├─► mostrarEstrategias()
                                     ├─► iniciarSimulador()
                                     └─► mostrarSensibilidad()
 ```

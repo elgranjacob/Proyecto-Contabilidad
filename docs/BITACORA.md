@@ -20,15 +20,31 @@ Meta del profesor: corregir a la IA **al menos 3 veces**.
 | 13 | 2026-11-16 | Los valores del sector serán entradas, no valores fijos | Se quitaron los promedios inventados por la IA; los campos del sector quedan vacíos y obligatorios; sector.js solo guarda el giro | ✅ **Corrección 1:** la IA había puesto promedios del sector "ilustrativos" sin fuente; el equipo decidió que deben capturarse con los datos del caso |
 | 14 | 2026-11-16 | Paso 10: dejar todo el formulario en blanco | Se quitaron los datos de ejemplo; todos los campos vacíos y obligatorios con texto guía (placeholder); empresa sin selección inicial | — |
 | 15 | 2026-11-16 | Agregar botón "Cargar ejemplo" | Botón junto a Calcular que llena el caso verificado (CCE = 103.89 días); datos en js/logica/ejemplo.js | — |
+| 16 | 2026-11-18 | Adaptar la app al Caso A (Ferretera del Norte) con las instrucciones del profesor | Formulario solo del Caso A en millones; compras como dato (430); supuestos seleccionables (365/360, ventas crédito/totales, inventario promedio/final, tasa 14%); comparación solo contra el CCE del sector (95 días); sección de 3 estrategias cuantificadas con riesgos y botón para simularlas | — |
 
-## Supuestos
-- Días del año: **capturado en el formulario** (sugerido 365; `DIAS_ANIO` en `js/logica/config.js` es el valor por defecto de las funciones de cálculo)
-- Ventas a crédito: capturadas como % de las ventas totales
-- Compras = Costo de ventas + Inventario final − Inventario inicial
-- PCI usa el **inventario final** (criterio Gitman). Alternativa: inventario promedio.
-- Tasa de interés anual: capturada en el formulario
-- Base diaria: inventario = Costo de ventas / días; cobranza = Ventas a crédito / días; proveedores = Compras / días
-- Ahorro financiero anual = Efectivo liberado × tasa (costo de oportunidad del financiamiento)
-- **Sector:** PCI, PCC y PDP del sector son **entradas obligatorias** del formulario (datos del caso). La app no trae valores por defecto.
-- Semáforo: verde ≤10% peor que el sector, amarillo 10–30%, rojo >30%. CCE se mide contra el ciclo operativo del sector (PCI+PCC)
-- Alertas: componente >1.5× el sector = riesgo; PDP <0.6× el sector = paga demasiado rápido; CCE >2× el sector = necesidad alta de financiamiento
+## Supuestos (Caso A: Ferretera del Norte)
+- Cifras en **millones de pesos**.
+- Días del año: **365** (seleccionable 360 en el formulario).
+- PCC con **ventas a crédito** (600 × 60% = 360). Alternativa seleccionable: ventas totales.
+- PCI con **inventario promedio** ((180 + 220) ÷ 2 = 200). Alternativa seleccionable: inventario final.
+- Compras: se usa la **cifra del caso (430)**. Calculadas (CV + IF − II) darían 460; la app muestra la diferencia como alerta informativa.
+- Tasa de financiamiento de corto plazo: **14%** para valorar el efectivo liberado. Ahorro anual = efectivo liberado × tasa.
+- Base diaria: inventario = Costo de ventas / días; cobranza = ventas usadas en el PCC / días; proveedores = Compras / días.
+- Sector: el caso solo da el **CCE promedio (95 días)**. El semáforo se aplica al CCE (verde ≤10% arriba, amarillo 10–30%, rojo >30%); los componentes se diagnostican por su peso en el ciclo.
+- Alertas: CCE >1.5× el sector = necesidad alta de financiamiento; PCI >120 d, PCC >60 d, PDP >90 d = riesgo operativo; en el simulador, recortes de >40 d de inventario, >20 d de cobro o >30 d más de pago generan alerta.
+- Estrategias (supuestos del equipo, en `js/logica/estrategias.js`): −30 d PCI, −15 d PCC, +25 d PDP = 70 días ≈ la brecha con el sector.
+
+## Verificación manual (365 días · ventas a crédito · inventario promedio)
+| Concepto | Cálculo | Resultado |
+|---|---|---|
+| PCI | 200 ÷ (420 ÷ 365) | 173.81 días |
+| PCC | 50 ÷ (360 ÷ 365) | 50.69 días |
+| PDP | 70 ÷ (430 ÷ 365) | 59.42 días |
+| CCE | 173.81 + 50.69 − 59.42 | 165.09 días (brecha +70.09 vs 95) |
+
+| Estrategia | Días | Efectivo liberado | Ahorro anual (14%) | CCE resultante |
+|---|---|---|---|---|
+| Inventario −30 d | 30 × 420/365 | $34.52 M | $4.83 M | 135.09 d |
+| Cobranza −15 d | 15 × 360/365 | $14.79 M | $2.07 M | 150.09 d |
+| Proveedores +25 d | 25 × 430/365 | $29.45 M | $4.12 M | 140.09 d |
+| Las tres | 70 d | $78.77 M | $11.03 M | 95.09 d |

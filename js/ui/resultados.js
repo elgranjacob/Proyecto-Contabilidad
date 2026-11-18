@@ -21,6 +21,13 @@ function pintarSemaforo(id, evaluacion) {
   el.textContent = `${icono} ${etiqueta} · sector ${evaluacion.ref.toFixed(0)} d`;
 }
 
+// Los componentes no tienen dato del sector: se muestra cuánto vale cada día
+function pintarBase(id, componente) {
+  const el = document.getElementById(id);
+  el.className = "semaforo nd";
+  el.textContent = `1 día = ${formatoPesos(componente.base)}`;
+}
+
 export function mostrarResultados(datos, r, comparacion) {
   // 1. Mostrar la sección con animación de entrada
   revelar(document.getElementById("resultados"));
@@ -31,34 +38,41 @@ export function mostrarResultados(datos, r, comparacion) {
   animarNumero(document.getElementById("res-pdp"), r.pdp, formatoDias);
   animarNumero(document.getElementById("res-cce"), r.cce, formatoDias, 900);
 
-  // Semáforos contra el sector
+  // Componentes: valor de un día · CCE: semáforo contra el sector
   const [pci, pcc, pdp] = comparacion.componentes;
-  pintarSemaforo("sem-pci", pci);
-  pintarSemaforo("sem-pcc", pcc);
-  pintarSemaforo("sem-pdp", pdp);
+  pintarBase("sem-pci", pci);
+  pintarBase("sem-pcc", pcc);
+  pintarBase("sem-pdp", pdp);
   pintarSemaforo("sem-cce", comparacion.cce);
 
   // 3. Tabla de desarrollo: [concepto, fórmula con datos, resultado]
   const d = datos.dias;
+  const n = formatoPesos;
   const filas = [
     ["Ventas a crédito",
-     `${formatoPesos(datos.ventas)} × ${datos.pctCredito}%`,
-     formatoPesos(r.ventasCredito)],
-    ["Compras",
-     `${formatoPesos(datos.costoVentas)} + ${formatoPesos(datos.invFinal)} − ${formatoPesos(datos.invInicial)}`,
-     formatoPesos(r.compras)],
-    ["PCI",
-     `${formatoPesos(datos.invFinal)} ÷ (${formatoPesos(datos.costoVentas)} ÷ ${d})`,
+     `${n(datos.ventas)} × ${datos.pctCredito}%`,
+     n(r.ventasCredito)],
+    ["Inventario promedio",
+     `(${n(datos.invInicial)} + ${n(datos.invFinal)}) ÷ 2`,
+     n(r.invPromedio)],
+    ["Compras (dato del caso)",
+     `Calculadas: ${n(datos.costoVentas)} + ${n(datos.invFinal)} − ${n(datos.invInicial)} = ${n(r.comprasCalculadas)}`,
+     n(r.compras)],
+    [`PCI (inventario ${datos.basePCI})`,
+     `${n(r.inventarioPCI)} ÷ (${n(datos.costoVentas)} ÷ ${d})`,
      formatoDias(r.pci)],
-    ["PCC",
-     `${formatoPesos(datos.cxc)} ÷ (${formatoPesos(r.ventasCredito)} ÷ ${d})`,
+    [`PCC (ventas ${datos.basePCC === "totales" ? "totales" : "a crédito"})`,
+     `${n(datos.cxc)} ÷ (${n(r.ventasPCC)} ÷ ${d})`,
      formatoDias(r.pcc)],
     ["PDP",
-     `${formatoPesos(datos.cxp)} ÷ (${formatoPesos(r.compras)} ÷ ${d})`,
+     `${n(datos.cxp)} ÷ (${n(r.compras)} ÷ ${d})`,
      formatoDias(r.pdp)],
     ["CCE",
      `${formatoDias(r.pci)} + ${formatoDias(r.pcc)} − ${formatoDias(r.pdp)}`,
      formatoDias(r.cce)],
+    ["Brecha vs sector",
+     `${formatoDias(r.cce)} − ${formatoDias(datos.sectorCCE)}`,
+     formatoDias(r.cce === null ? null : r.cce - datos.sectorCCE)],
   ];
   llenarTabla(document.getElementById("tabla-desarrollo"), filas);
 }

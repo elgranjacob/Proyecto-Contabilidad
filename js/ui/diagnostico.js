@@ -11,8 +11,9 @@ export function mostrarDiagnostico(datos, r, comparacion) {
   revelar(document.getElementById("diagnostico"));
 
   document.getElementById("diag-giro").textContent =
-    `Referencia: ${datos.sector.giro}. Promedios del sector capturados en el formulario: ` +
-    `PCI ${datos.sector.pci} d, PCC ${datos.sector.pcc} d, PDP ${datos.sector.pdp} d.`;
+    `Referencia: ferreterías (comercio minorista). CCE promedio del sector: ${datos.sectorCCE} días. ` +
+    `Supuestos: ${datos.dias} días · PCC con ventas ${datos.basePCC === "totales" ? "totales" : "a crédito"} · ` +
+    `PCI con inventario ${datos.basePCI} · tasa ${datos.tasa}%.`;
 
   // 1. Interpretación: un <p> por párrafo
   const caja = document.getElementById("diag-interpretacion");
@@ -26,7 +27,7 @@ export function mostrarDiagnostico(datos, r, comparacion) {
   // 2. Alertas: primero las de datos (errores de captura), luego las operativas
   pintarAlertas(
     document.getElementById("diag-alertas"),
-    [...alertasDeDatos(datos, r), ...generarAlertas(r, datos.sector)],
+    [...alertasDeDatos(datos, r), ...generarAlertas(r, datos)],
     "Sin alertas de riesgo."
   );
 
@@ -45,7 +46,7 @@ export function mostrarDiagnostico(datos, r, comparacion) {
         },
         {
           label: "Sector",
-          data: [...componentes.map((c) => c.ref), cce.ref],
+          data: [null, null, null, cce.ref], // el caso solo da el CCE del sector
           backgroundColor: COLORES.serie2,
           borderRadius: 4,
         },
@@ -57,7 +58,7 @@ export function mostrarDiagnostico(datos, r, comparacion) {
         legend: { position: "top", align: "start", labels: { usePointStyle: true, pointStyle: "rectRounded" } },
         tooltip: {
           callbacks: {
-            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? "N/D"} días`,
+            label: (ctx) => ctx.parsed.y === null ? null : ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} días`,
           },
         },
       },

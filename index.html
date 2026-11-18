@@ -3,103 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finsera Capital</title>
+  <title>CCE · Ferretera del Norte</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/formulario.css">
   <link rel="stylesheet" href="css/resultados.css">
   <link rel="stylesheet" href="css/simulador.css">
+  <link rel="stylesheet" href="css/estrategias.css">
   <link rel="stylesheet" href="css/diagnostico.css">
   <link rel="stylesheet" href="css/ventana.css">
   <link rel="stylesheet" href="css/animaciones.css">
 </head>
 <body>
   <header class="encabezado">
-    <p class="etiqueta">Finanzas en las Organizaciones</p>
-    <h1>Ciclo de Conversión de Efectivo</h1>
+    <p class="etiqueta">Finanzas en las Organizaciones · Caso A</p>
+    <h1>Ferretera del Norte</h1>
+    <p class="subtitulo">Ciclo de Conversión de Efectivo · cifras en millones de pesos</p>
     <p class="formula">CCE = PCI + PCC − PDP</p>
   </header>
 
   <main>
-    <!-- Formulario de captura. Empieza en blanco: todos los campos son obligatorios.
+    <!-- Formulario de captura con los datos del Caso A (cifras en millones de pesos).
+         Empieza en blanco: "Cargar datos del caso" llena las cifras del PDF.
          placeholder="..." es solo un texto de guía gris, NO un valor. -->
     <form id="form-captura">
 
-      <!-- ===== Empresa ===== -->
-      <fieldset>
-        <legend>Empresa</legend>
-        <label for="empresa">Nombre</label>
-        <select id="empresa" name="empresa" required>
-          <!-- Opción vacía: obliga a elegir una empresa (value="" + required) -->
-          <option value="" disabled selected>Selecciona una empresa…</option>
-          <option value="A">A · Ferretera del Norte</option>
-          <option value="B">B · Abarrotes Central</option>
-          <option value="C">C · Plásticos del Bajío</option>
-          <option value="D">D · Tecno Hogar</option>
-        </select>
-      </fieldset>
-
       <!-- ===== Estado de resultados ===== -->
       <fieldset>
-        <legend>Estado de resultados</legend>
+        <legend>Estado de resultados (millones $)</legend>
 
-        <label for="ventas">Ventas totales ($)</label>
-        <input type="number" id="ventas" name="ventas" min="0" step="any" placeholder="Ej. 12000000" required>
+        <label for="ventas">Ventas totales</label>
+        <input type="number" id="ventas" name="ventas" min="0" step="any" placeholder="Ej. 600" required>
 
         <label for="pctCredito">Ventas a crédito (%)</label>
-        <input type="number" id="pctCredito" name="pctCredito" min="0" max="100" step="any" placeholder="Ej. 100" required>
+        <input type="number" id="pctCredito" name="pctCredito" min="0" max="100" step="any" placeholder="Ej. 60" required>
 
-        <label for="costoVentas">Costo de ventas ($)</label>
-        <input type="number" id="costoVentas" name="costoVentas" min="0" step="any" placeholder="Ej. 8400000" required>
+        <label for="costoVentas">Costo de ventas</label>
+        <input type="number" id="costoVentas" name="costoVentas" min="0" step="any" placeholder="Ej. 420" required>
+
+        <label for="compras">Compras</label>
+        <input type="number" id="compras" name="compras" min="0" step="any" placeholder="Ej. 430" required>
       </fieldset>
 
       <!-- ===== Balance general ===== -->
       <fieldset>
-        <legend>Balance general</legend>
+        <legend>Balance general (millones $)</legend>
 
-        <label for="invInicial">Inventario inicial ($)</label>
-        <input type="number" id="invInicial" name="invInicial" min="0" step="any" placeholder="Ej. 1800000" required>
+        <label for="invInicial">Inventario inicial</label>
+        <input type="number" id="invInicial" name="invInicial" min="0" step="any" placeholder="Ej. 180" required>
 
-        <label for="invFinal">Inventario final ($)</label>
-        <input type="number" id="invFinal" name="invFinal" min="0" step="any" placeholder="Ej. 2200000" required>
+        <label for="invFinal">Inventario final</label>
+        <input type="number" id="invFinal" name="invFinal" min="0" step="any" placeholder="Ej. 220" required>
 
-        <label for="cxc">Cuentas por cobrar ($)</label>
-        <input type="number" id="cxc" name="cxc" min="0" step="any" placeholder="Ej. 1500000" required>
+        <label for="cxc">Cuentas por cobrar (cierre)</label>
+        <input type="number" id="cxc" name="cxc" min="0" step="any" placeholder="Ej. 50" required>
 
-        <label for="cxp">Cuentas por pagar ($)</label>
-        <input type="number" id="cxp" name="cxp" min="0" step="any" placeholder="Ej. 900000" required>
+        <label for="cxp">Cuentas por pagar (cierre)</label>
+        <input type="number" id="cxp" name="cxp" min="0" step="any" placeholder="Ej. 70" required>
       </fieldset>
 
-      <!-- ===== Supuestos ===== -->
+      <!-- ===== Supuestos que el caso pide declarar ===== -->
       <fieldset>
-        <legend>Supuestos</legend>
+        <legend>Supuestos declarados</legend>
 
         <label for="dias">Días del año</label>
-        <input type="number" id="dias" name="dias" min="1" placeholder="Ej. 365" required>
+        <select id="dias" name="dias" required>
+          <option value="365" selected>365 días (año calendario)</option>
+          <option value="360">360 días (año comercial)</option>
+        </select>
 
-        <label for="tasa">Tasa de interés anual (%)</label>
-        <input type="number" id="tasa" name="tasa" min="0" step="any" placeholder="Ej. 12" required>
+        <label for="basePCC">Ventas usadas en el PCC</label>
+        <select id="basePCC" name="basePCC" required>
+          <option value="credito" selected>Ventas a crédito</option>
+          <option value="totales">Ventas totales</option>
+        </select>
+
+        <label for="basePCI">Inventario usado en el PCI</label>
+        <select id="basePCI" name="basePCI" required>
+          <option value="promedio" selected>Inventario promedio</option>
+          <option value="final">Inventario final</option>
+        </select>
+
+        <label for="tasa">Tasa de financiamiento de corto plazo (%)</label>
+        <input type="number" id="tasa" name="tasa" min="0" step="any" placeholder="Ej. 14" required>
+        <p class="nota">Se usa para valorar el efectivo liberado.</p>
       </fieldset>
 
-      <!-- ===== Referencia del sector: ENTRADAS obligatorias (datos del caso) ===== -->
+      <!-- ===== Referencia del sector ===== -->
       <fieldset>
-        <legend>Referencia del sector (días)</legend>
-        <p class="nota" id="sector-giro"></p>
+        <legend>Referencia del sector</legend>
+        <p class="nota">Giro: ferreterías (comercio minorista)</p>
 
-        <label for="sectorPci">PCI del sector</label>
-        <input type="number" id="sectorPci" name="sectorPci" min="0" step="any" placeholder="Ej. 60" required>
+        <label for="sectorCCE">CCE promedio del sector (días)</label>
+        <input type="number" id="sectorCCE" name="sectorCCE" min="0" step="any" placeholder="Ej. 95" required>
 
-        <label for="sectorPcc">PCC del sector</label>
-        <input type="number" id="sectorPcc" name="sectorPcc" min="0" step="any" placeholder="Ej. 30" required>
-
-        <label for="sectorPdp">PDP del sector</label>
-        <input type="number" id="sectorPdp" name="sectorPdp" min="0" step="any" placeholder="Ej. 45" required>
-
-        <p class="nota">Capturen los promedios del sector que vienen en el caso de su empresa.</p>
+        <p class="nota">El caso solo reporta el CCE del sector; los componentes se diagnostican por su peso en el ciclo.</p>
       </fieldset>
 
       <!-- Botones. type="button" NO envía el formulario; type="submit" sí. -->
       <div class="acciones">
-        <button type="button" id="cargar-ejemplo" class="secundario">Cargar ejemplo</button>
+        <button type="button" id="cargar-ejemplo" class="secundario">Cargar datos del caso</button>
         <button type="submit">Calcular</button>
       </div>
     </form>
@@ -168,9 +170,25 @@
       <ul class="alertas" id="diag-alertas"></ul>
 
       <h3>Empresa vs sector</h3>
+      <p class="nota">El sector solo reporta el CCE; las barras de PCI, PCC y PDP muestran la composición del ciclo de la empresa.</p>
       <div class="grafica">
         <canvas id="grafica-sector" role="img" aria-label="Gráfica de barras: días de PCI, PCC, PDP y CCE de la empresa comparados con el sector"></canvas>
       </div>
+    </section>
+
+    <!-- ===== Estrategias propuestas ===== -->
+    <section id="estrategias">
+      <h2>Estrategias de reducción</h2>
+      <p>Tres estrategias cuantificadas, una por componente. Los días de cada una son supuestos del equipo (se ajustan en <code>js/logica/estrategias.js</code>).</p>
+
+      <table class="desarrollo tabla-estrategias">
+        <thead>
+          <tr><th>Estrategia</th><th>Componente</th><th>Días de CCE</th><th>Efectivo liberado</th><th>Ahorro anual</th><th>CCE resultante</th><th></th></tr>
+        </thead>
+        <tbody id="tabla-estrategias"></tbody>
+      </table>
+
+      <div class="lista-estrategias" id="detalle-estrategias"></div>
     </section>
 
     <!-- ===== Simulador ===== -->

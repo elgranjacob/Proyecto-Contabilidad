@@ -46,7 +46,7 @@ export function dibujarGrafica(canvas, config) {
   instancias.set(canvas, grafica);
 }
 
-// Formato corto para ejes: 1,250,000 -> "$1.3 M"
-export const pesosCorto = new Intl.NumberFormat("es-MX", {
-  style: "currency", currency: "MXN", notation: "compact", maximumFractionDigits: 1,
-});
+// Formato corto para ejes (cifras en millones): 34.52 -> "$34.5 M"
+export const pesosCorto = {
+  format: (v) => `$${Number(v).toLocaleString("es-MX", { maximumFractionDigits: 1 })} M`,
+};
